@@ -1,6 +1,5 @@
 package com.dmhyparser.utilparser;
 
-import com.dmhyparser.jparser.BaseParser;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -43,6 +42,6 @@ public class TranslaterParser {
         obj = URLEncoder.encode(obj);
         String query = String.format(Template, api, obj, SourceLang, TargetLang);
         String ans = readFromHTTP(query);
-        return (getOutput(ans)!="")?getOutput(ans):null;
+        return (getOutput(ans) != "") ? getOutput(ans) : null;
     }
 }

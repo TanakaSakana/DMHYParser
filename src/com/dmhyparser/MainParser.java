@@ -1,11 +1,9 @@
 package com.dmhyparser;
 
 import com.dmhyparser.info.BANGUMI;
-import com.dmhyparser.info.BangumiInfo;
 import com.dmhyparser.info.Year;
 import com.dmhyparser.jparser.JSONBangumiParser;
 import com.dmhyparser.jparser.JSONIndexParser;
-import com.dmhyparser.workerthreads.DescriptionParserThread;
 import com.dmhyparser.workerthreads.SeasonParserThread;
 
 import java.util.ArrayList;
@@ -15,13 +13,16 @@ import java.util.concurrent.Executors;
 
 public class MainParser {
     public static boolean update() throws Exception {
+
         // Initialize
         BANGUMI.clearAll();
         ExecutorService executorService = Executors.newCachedThreadPool();
         List<SeasonParserThread> threads = new ArrayList<>();
+
         // Get the Index for scraping JSONs
         String rawData = JSONBangumiParser.readFromHTTP("http://share.dmhy.org/json/index.json?" + Math.random());
         BANGUMI.setIndexList(JSONIndexParser.parse(rawData));
+
         // Iterating JSON scrapping
         for (Year year : BANGUMI.getIndexList()) {
             for (final String season : year.getSeasonsValues()) {
