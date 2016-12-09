@@ -12,7 +12,7 @@ public class ZHWikiParser implements BaseWikiParser {
         try {
             jsonres = com.dmhyparser.jparser.BaseParser.readFromHTTP(opt);
         } catch (Exception e) {
-            System.out.println("parse HTTP response error");
+            System.out.println("ZHWikiParser response error");
         }
         if (jsonres.indexOf("[") != -1) {
             JSONArray input = new JSONArray(jsonres.substring(jsonres.indexOf("[")));

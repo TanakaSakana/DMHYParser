@@ -25,10 +25,19 @@ public class CombinedParser {
         results.add(service.submit(new Callable<String>() {
             @Override
             public String call() throws Exception {
-                return JAParser.parse(TranslaterParser.translate(query, "zh", "ja").substring(0, 5));
+                String translate = TranslaterParser.translate(query, "zh", "ja");
+                if (translate.length() > 5)
+                    translate = translate.substring(0, 5);
+                return JAParser.parse(translate);
             }
         }));
-
+        results.add(service.submit(new Callable<String>() {
+            @Override
+            public String call() throws Exception {
+                return JAParser.parse(query);
+            }
+        }));
+        service.shutdown();
         for (Future<String> result : results) {
             String res = result.get();
             if (res != null) return res;
