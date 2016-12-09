@@ -4,39 +4,36 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
 
-public class CombinedParser implements BaseWikiParser {
+public class CombinedParser {
     BaseWikiParser JAParser, ENParser, ZHParser;
 
     private static String getWithExecutorServices(final String query) throws Exception {
-        String Description;
-        BaseWikiParser JAParser, ENParser, ZHParser;
+        final BaseWikiParser JAParser, ZHParser;
         JAParser = new JAWikiParser();
-        ENParser = new ENWikiParser();
         ZHParser = new ZHWikiParser();
 
         List<Future<String>> results = new ArrayList<>();
         ExecutorService service = Executors.newCachedThreadPool();
 
-        if ((Description = ZHParser.parse(query)) == null) {
-            results.add(service.submit(new Callable<String>() {
-                @Override
-                public String call() throws Exception {
-                    return ENParser.parse(TranslaterParser.translate(query, "zh", "en"));
-                }
-            }));
-            results.add(service.submit(new Callable<String>() {
-                @Override
-                public String call() throws Exception {
-                    return JAParser.parse(TranslaterParser.translate(query, "zh", "ja").substring(0, 5));
-                }
-            }));
-            for (Future<String> result : results) {
-                String res = result.get();
-                if (res != null) return res;
+        results.add(service.submit(new Callable<String>() {
+            @Override
+            public String call() throws Exception {
+                return ZHParser.parse(query);
             }
-            return null;
+        }));
+
+        results.add(service.submit(new Callable<String>() {
+            @Override
+            public String call() throws Exception {
+                return JAParser.parse(TranslaterParser.translate(query, "zh", "ja").substring(0, 5));
+            }
+        }));
+
+        for (Future<String> result : results) {
+            String res = result.get();
+            if (res != null) return res;
         }
-        return Description;
+        return null;
     }
 
     /**
@@ -44,7 +41,6 @@ public class CombinedParser implements BaseWikiParser {
      * 2.  Future Task
      * 3. Executor Services
      */
-    @Override
     public String parse(String query) throws Exception {
         return getWithExecutorServices(query);
     }
