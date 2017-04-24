@@ -8,12 +8,12 @@ public class ENWikiParser implements BaseWikiParser {
     public String parse(String query) {
         String jsonres = "";
 
-        String temp = "https://en.wikipedia.org/w/api.php?action=opensearch&search=%s&limit=3&namespace=0&format=json";
+        String temp = "https://en.wikipedia.org/w/api.php?action=opensearch&search=%s&limit=10&namespace=0&format=json";
         String opt = String.format(temp, query);
         try {
             jsonres = com.dmhyparser.jparser.BaseParser.readFromHTTP(opt);
         } catch (Exception e) {
-            System.out.println("ENWikiParser response error");
+            System.out.println("parse HTTP response error");
         }
         if (jsonres.indexOf("[") != -1) {
             JSONArray input = new JSONArray(jsonres.substring(jsonres.indexOf("[")));
@@ -23,9 +23,10 @@ public class ENWikiParser implements BaseWikiParser {
                 JSONArray arr = new JSONArray(response);
                 if (arr.length() > 1) {
                     for (int i = 0; i < arr.length(); i++) {
+						//System.out.println(arr.get(i));
                         // Query row length
-                        if (arr.get(i).toString().length() > 50)
-                            if (arr.get(i).toString().indexOf("[Aa]nimation") != -1 || arr.get(i).toString().indexOf("[Aa]nime") != -1 || arr.get(i).toString().indexOf("[Mm]anga") != -1)
+                        if (arr.get(i).toString().length() > 10)
+                            //if (arr.get(i).toString().indexOf("[Aa]nimation") != -1 || arr.get(i).toString().indexOf("[Aa]nime") != -1 || arr.get(i).toString().indexOf("[Mm]anga") != -1)
                                 return arr.get(i).toString();
                     }
                 }

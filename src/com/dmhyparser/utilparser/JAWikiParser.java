@@ -7,12 +7,12 @@ public class JAWikiParser implements BaseWikiParser {
     public String parse(String query) {
         String jsonres = "";
 
-        String temp = "https://ja.wikipedia.org/w/api.php?action=opensearch&search=%s&limit=3&namespace=0&format=json";
+        String temp = "https://ja.wikipedia.org/w/api.php?action=opensearch&search=%s&limit=10&namespace=0&format=json";
         String opt = String.format(temp, query);
         try {
             jsonres = com.dmhyparser.jparser.BaseParser.readFromHTTP(opt);
         } catch (Exception e) {
-            System.out.println("JAWikiParser response error");
+            System.out.println("parse HTTP response error");
         }
         if (jsonres.indexOf("[") != -1) {
             JSONArray input = new JSONArray(jsonres.substring(jsonres.indexOf("[")));
@@ -23,9 +23,8 @@ public class JAWikiParser implements BaseWikiParser {
                 if (arr.length() > 1) {
                     for (int i = 0; i < arr.length(); i++) {
                         // Query row length
-                        if (arr.get(i).toString().length() > 80) {
+                        if (arr.get(i).toString().length() > 10)
                             return arr.get(i).toString();
-                        }
                     }
                 }
             }
